@@ -23,9 +23,10 @@ function imgui.OnDrawFrame()
     color_teg = imgui.ImBuffer(u8(mainIni.config.color_teg),7)
     color_pozivnoi = imgui.ImBuffer(u8(mainIni.config.color_pozivnoi),7)
     color_text = imgui.ImBuffer(u8(mainIni.config.color_text),7)
+    UseTeg = imgui.ImBool(mainIni.config.UseTeg)
 
     if mws.v then
-        imgui.SetNextWindowSize(imgui.ImVec2(400, 245), imgui.Cond.FirstUseEver) -- resoluthion window
+        imgui.SetNextWindowSize(imgui.ImVec2(400, 270), imgui.Cond.FirstUseEver) -- resoluthion window
         imgui.SetNextWindowPos(imgui.ImVec2((sw/2),sh/2),imgui.Cond.FirstUseEver,imgui.ImVec2(0.5,0.5)) -- in center monitor
 
         imgui.Begin(u8'Настройки',mws)
@@ -46,9 +47,13 @@ function imgui.OnDrawFrame()
             IRCConnect()
         end
 
-        if imgui.InputText(u8'Введите ваш позывной',text_pozivnoi) then 
-            mainIni.config.pozivnoi = u8:decode(text_pozivnoi.v) 
-        end 
+        if imgui.Checkbox(u8'Использовать позывной',UseTeg) then mainIni.config.UseTeg = UseTeg.v end
+
+        if mainIni.config.UseTeg then
+            if imgui.InputText(u8'Введите ваш позывной',text_pozivnoi) then 
+                mainIni.config.pozivnoi = u8:decode(text_pozivnoi.v) 
+            end
+        end
 
         imgui.Text(u8('Цвет:'))
         if imgui.InputText(u8'Тега',color_teg) then 
@@ -134,12 +139,12 @@ end
 
 function onIRCSendMessage(param)
     if s.__isConnected then
-        if mainIni.config.pozivnoi and not (param == '' or param == ' ' or param == nil)then
-            pred_text = string.format('{%s}«%s»{FFFFFF} ',mainIni.config.color_pozivnoi,mainIni.config.pozivnoi)
-            params = pred_text..param
+        if mainIni.config.UseTeg and not (param == '' or param == ' ' or param == nil)then
+            pred_text = string.format('{%s}«%s»{FFFFFF}  ',mainIni.config.color_pozivnoi,mainIni.config.pozivnoi)
+            param = pred_text..param
         end
         s:sendChat('#'..ip..mainIni.config.code,u8(tostring(params)))
-        sampAddChatMessage(string.format('{%s}[%s] {%s}%s [%s]{FFFFFF}: %s{%s} %s',mainIni.config.color_teg,mainIni.config.teg,string.format("%06X", ARGBtoRGB(sampGetPlayerColor(MyId))),MyName,MyId,pred_text,mainIni.config.color_text,param),-1)
+        sampAddChatMessage(string.format('{%s}[%s] {%s}%s [%s]{FFFFFF}: {%s} %s',mainIni.config.color_teg,mainIni.config.teg,string.format("%06X", ARGBtoRGB(sampGetPlayerColor(MyId))),MyName,MyId,mainIni.config.color_text,param),-1)
     else
         stext('Вы ещё не подключились к серверу')
     end
