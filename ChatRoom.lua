@@ -139,12 +139,16 @@ end
 
 function onIRCSendMessage(param)
     if s.__isConnected then
-        if mainIni.config.UseTeg and not (param == '' or param == ' ' or param == nil)then
-            pred_text = string.format('{%s}«%s»{FFFFFF}  ',mainIni.config.color_pozivnoi,mainIni.config.pozivnoi)
-            param = pred_text..param
+        if param == '' or param == " " then
+            stext('Вы не указали текст')
+        else
+            if mainIni.config.UseTeg and not (param == '' or param == ' ' or param == nil)then
+                pred_text = string.format('{%s}«%s»{FFFFFF}  ',mainIni.config.color_pozivnoi,mainIni.config.pozivnoi)
+                param = pred_text..param
+            end
+            s:sendChat('#'..ip..mainIni.config.code,u8(tostring(param)))
+            sampAddChatMessage(string.format('{%s}[%s] {%s}%s [%s]{FFFFFF}: {%s} %s',mainIni.config.color_teg,mainIni.config.teg,string.format("%06X", ARGBtoRGB(sampGetPlayerColor(MyId))),MyName,MyId,mainIni.config.color_text,param),-1)
         end
-        s:sendChat('#'..ip..mainIni.config.code,u8(tostring(params)))
-        sampAddChatMessage(string.format('{%s}[%s] {%s}%s [%s]{FFFFFF}: {%s} %s',mainIni.config.color_teg,mainIni.config.teg,string.format("%06X", ARGBtoRGB(sampGetPlayerColor(MyId))),MyName,MyId,mainIni.config.color_text,param),-1)
     else
         stext('Вы ещё не подключились к серверу')
     end
