@@ -1,0 +1,9 @@
+{
+  "update_version": 1.0,
+  "updateurl": "https://raw.githubusercontent.com/n1cho/SAMP-Lua/main/delta_script.luac",
+  "update_info":[
+    "Внутривзводный чат-рум",
+    "Команда делующая доклад",
+    "Авто-обновление"
+  ]
+}
